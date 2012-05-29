@@ -24,6 +24,7 @@ parser.add_argument("-s",  "--server", help="MANDATORY: Server on  which TopHat 
 parser.add_argument("-u", "--user", help="Provide username to login with", dest="user")
 parser.add_argument("-p", "--password", help="Provide password to login with", dest="password")
 parser.add_argument("--noverify", help="Turn off SSL validation", action="store_true")
+parser.add_argument("-t", "--testpath", help="Optionally provide path from root of test request, defaults to jsontest/",  default="jsontest/", dest="testpath")
 args  = parser.parse_args()
 
 
@@ -33,6 +34,7 @@ def main ():
 	testcount = 1
 	successful = 0
 	failed = 0
+	
 	if args.server is None: 
 		print "\nExpected server URL to be supplied"
 		print "Closing...."
@@ -47,13 +49,13 @@ def main ():
 	print  "\n\n\n"
 
 	# Hello world test
-	print "TEST " + colored(testcount, "blue") + ": Attempting 'Hello, world' JSON test..."
+	print "TEST " + colored(testcount, "blue") + ": Attempting 'Hello, world' test..."
 	try:
 		if args.noverify:
 			h = httplib2.Http(disable_ssl_certificate_validation=True)
 		else:
 			h = httplib2.Http()
-		(resp_headers, content) = h.request(args.server, "GET")
+		(resp_headers, content) = h.request(args.server + args.testpath, "GET")
 		print "TEST " + colored(testcount, "blue") + ": " + colored("Successful", "green")
 		successful = successful + 1
 	except:
