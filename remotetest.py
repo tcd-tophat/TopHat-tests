@@ -18,6 +18,8 @@ __version__ = "0.0.1"
 
 # Login, API token, Create/Delete user, Create/Delete game, Time requests for user data, game data etc. 
 # Try to break server... Bad HTTP, bad JSON
+SANITY_URL = "http://www.google.com/ "
+
 init()
 parser = argparse.ArgumentParser(description="Test suite for TopHat server")
 parser.add_argument("-s",  "--server", help="MANDATORY: Server on  which TopHat platform is running on", dest="server")
@@ -36,38 +38,46 @@ def main ():
 	failed = 0
 	
 	if args.server is None: 
-		print "\nExpected server URL to be supplied"
-		print "Closing...."
 		print colored("\nYou must supply a server to test!!", "red")
+		print "\nExpected server URL to be supplied"
+		print "Closing....\n"
 		sys.exit(-1)
-	print "\n === Supplied Information ===\n"
-	print  "Server = "+ colored(args.server, "blue") 
+	print colored("\nPARAMS:", "blue")
+	print  "Server: " + colored(args.server, "blue") 
 	if args.user is not None:
-		print "Username = " + colored(args.user, "blue")
+		print "Username: "  + colored(args.user, "blue")
 	if args.password is not None:
-		print "Password = " + colored(args.password, "blue")
+		print "Password: "  + colored(args.password, "blue")
 	print  "\n\n\n"
 
+	h = httplib2.Http()
+	try:
+		(resp_headers, content) = h.request(SANITY_URL, "GET") # sanity check
+	except:
+		print colored("FAILED: Sanity check", "red") + ": "  + "Could not connect to " + SANITY_URL + ", check your internet connection"
+		print "Closing...."
+		sys.exit(-1)
+
 	# Hello world test
-	print "TEST " + colored(testcount, "blue") + ": Attempting 'Hello, world' test..."
+	print "TEST " + colored(testcount, "blue") + ": "  + "Attempting 'Hello, world' test..."
 	try:
 		if args.noverify:
 			h = httplib2.Http(disable_ssl_certificate_validation=True)
 		else:
 			h = httplib2.Http()
 		(resp_headers, content) = h.request(args.server + args.testpath, "GET")
-		print "TEST " + colored(testcount, "blue") + ": " + colored("Successful", "green")
+		print "TEST " + colored(testcount, "blue") + ": "  + colored("Successful", "green")
 		successful = successful + 1
 	except:
-		print colored("\tFAILED", "red")
-		print colored("\tREASON:  ", "red") + colored(sys.exc_info()[:2], "red")
+		print colored("FAILED", "red")
+		print colored("REASON: ", "red")  + colored(sys.exc_info()[:2], "red")
 		failed = failed + 1
 
 
 	print "\n\n === TESTS COMPLETE ===\n"
-	print "Tests ran = " + colored(testcount, "blue")
-	print "Successful = " + colored(successful, "green")
-	print  "Failed = " + colored(failed, "red")
+	print "Tests ran: " + colored(testcount, "blue")
+	print "Successful: " + colored(successful, "green")
+	print  "Failed: " + colored(failed, "red")
 
 
 if __name__ == '__main__':
