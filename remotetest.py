@@ -58,7 +58,7 @@ def main ():
 		successful = successful + 1
 	except:
 		print colored("\tFAILED", "red")
-		print colored("\tREASON:  ", "red") + colored(sys.exc_info()[0], "red")
+		print colored("\tREASON:  ", "red") + colored(sys.exc_info()[:2], "red")
 		failed = failed + 1
 
 
