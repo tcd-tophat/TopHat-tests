@@ -23,6 +23,7 @@ parser = argparse.ArgumentParser(description="Test suite for TopHat server")
 parser.add_argument("-s",  "--server", help="MANDATORY: Server on  which TopHat platform is running on", dest="server")
 parser.add_argument("-u", "--user", help="Provide username to login with", dest="user")
 parser.add_argument("-p", "--password", help="Provide password to login with", dest="password")
+parser.add_argument("--noverify", help="Turn off SSL validation", action="store_true")
 args  = parser.parse_args()
 
 
@@ -51,8 +52,12 @@ def main ():
 	# Hello world test
 	#h = httplib2.Http(disable_ssl_certificate_validation=True) # Commented out cos lol
 	print "TEST " + colored(testcount, "blue") + ": Attempting 'Hello, world' JSON test..."
-	h = httplib2.Http(".cache") 
 	try:
+		if args.noverify:
+			h = httplib2.Http(disable_ssl_certificate_validation=True)
+
+		else:
+			h = httplib2.Http()
 		(resp_headers, content) = h.request(args.server, "GET")
 		print "TEST " + colored(testcount, "blue") + ": " + colored("Successful", "green")
 		successful = successful + 1
