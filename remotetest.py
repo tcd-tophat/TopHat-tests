@@ -46,16 +46,11 @@ def main ():
 		print "Password = " + colored(args.password, "blue")
 	print  "\n\n\n"
 
-
-
-
 	# Hello world test
-	#h = httplib2.Http(disable_ssl_certificate_validation=True) # Commented out cos lol
 	print "TEST " + colored(testcount, "blue") + ": Attempting 'Hello, world' JSON test..."
 	try:
 		if args.noverify:
 			h = httplib2.Http(disable_ssl_certificate_validation=True)
-
 		else:
 			h = httplib2.Http()
 		(resp_headers, content) = h.request(args.server, "GET")
@@ -71,17 +66,6 @@ def main ():
 	print "Tests ran = " + colored(testcount, "blue")
 	print "Successful = " + colored(successful, "green")
 	print  "Failed = " + colored(failed, "red")
-	
-
-	
-
-
-
-		
-
-
-
-
 
 
 if __name__ == '__main__':
