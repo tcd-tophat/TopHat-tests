@@ -10,11 +10,9 @@ remotetest
 	Script for remote testing for the TopHat server.
 
 """
-
-
 __author__ = "Ian Connolly (ian@tophat.ie, connolim@tcd.ie)"
 __license__ = "MIT"
-__version__ = "0.0.1"
+__version__ = "0.0.6"
 
 # Login, API token, Create/Delete user, Create/Delete game, Time requests for user data, game data etc. 
 # Try to break server... Bad HTTP, bad JSON
@@ -26,7 +24,8 @@ parser.add_argument("-s",  "--server", help="MANDATORY: Server on  which TopHat 
 parser.add_argument("-u", "--user", help="Provide username to login with", dest="user")
 parser.add_argument("-p", "--password", help="Provide password to login with", dest="password")
 parser.add_argument("--noverify", help="Turn off SSL validation", action="store_true")
-parser.add_argument("-t", "--testpath", help="Optionally provide path from root of test request, defaults to jsontest/",  default="jsontest/", dest="testpath")
+parser.add_argument("-t", "--testpath", help="Provide path from root of test request, defaults to jsontest/",  default="jsontest/", dest="testpath")
+parser.add_argument("-j", "--json", help="Provide sample json data for Hello, World test. Defaults to platform default", default='\r{"glossary": {"title": "example glossary","GlossDiv": {"title": "S","GlossList": {"GlossEntry": {"ID": "SGML","SortAs": "SGML","GlossTerm": "Standard Generalized Markup Language","Acronym": "SGML","Abbrev": "ISO 8879:1986","GlossDef": {"para": "A meta-markup language, used to create markup languages such as DocBook.","GlossSeeAlso": ["GML", "XML"]},"GlossSee": "markup"}}}}}\n', dest="test_json")
 args  = parser.parse_args()
 
 
@@ -66,11 +65,17 @@ def main ():
 		else:
 			h = httplib2.Http()
 		(resp_headers, content) = h.request(args.server + args.testpath, "GET")
-		print "TEST " + colored(testcount, "blue") + ": "  + colored("Successful", "green")
-		successful = successful + 1
+		
+		if content.rstrip()  in args.test_json.rstrip():
+			print "TEST " + colored(testcount, "blue") + ": "  + colored("Successful", "green")
+			successful = successful + 1
+		else:
+			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+			print "\tREASON: " + colored("Returned JSON does not equal sample JSON", "red")
+			failed = failed + 1
 	except:
-		print colored("FAILED", "red")
-		print colored("REASON: ", "red")  + colored(sys.exc_info()[:2], "red")
+		print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+		print "\tREASON: " + colored(sys.exc_info()[:2], "red")
 		failed = failed + 1
 
 
