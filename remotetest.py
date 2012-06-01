@@ -3,6 +3,8 @@ import argparse
 import sys
 from colorama import init
 from termcolor import colored
+import re as regex
+import json
 
 """
 remotetest
@@ -21,8 +23,8 @@ SANITY_URL = "http://www.google.com/ "
 init()
 parser = argparse.ArgumentParser(description="Test suite for TopHat server")
 parser.add_argument("-s",  "--server", help="MANDATORY: Server on  which TopHat platform is running on", dest="server")
-parser.add_argument("-u", "--user", help="Provide username to login with", dest="user")
-parser.add_argument("-p", "--password", help="Provide password to login with", dest="password")
+parser.add_argument("-u", "--user", help="Provide username to login with", dest="user", default="testuser")
+parser.add_argument("-p", "--password", help="Provide password to login with", dest="password", default="test")
 parser.add_argument("--noverify", help="Turn off SSL validation", action="store_true")
 parser.add_argument("-t", "--testpath", help="Provide path from root of test request, defaults to jsontest/",  default="jsontest/", dest="testpath")
 parser.add_argument("-j", "--json", help="Provide sample json data for Hello, World test. Defaults to platform default", default='\r{"glossary": {"title": "example glossary","GlossDiv": {"title": "S","GlossList": {"GlossEntry": {"ID": "SGML","SortAs": "SGML","GlossTerm": "Standard Generalized Markup Language","Acronym": "SGML","Abbrev": "ISO 8879:1986","GlossDef": {"para": "A meta-markup language, used to create markup languages such as DocBook.","GlossSeeAlso": ["GML", "XML"]},"GlossSee": "markup"}}}}}\n', dest="test_json")
@@ -43,10 +45,8 @@ def main ():
 		sys.exit(-1)
 	print colored("\nPARAMS:", "blue")
 	print  "Server: " + colored(args.server, "blue") 
-	if args.user is not None:
-		print "Username: "  + colored(args.user, "blue")
-	if args.password is not None:
-		print "Password: "  + colored(args.password, "blue")
+	print "Username: " + colored(args.user, "blue")
+	print "Password: " + colored(args.password, "blue")
 	print  "\n\n\n"
 
 	h = httplib2.Http()
@@ -57,15 +57,15 @@ def main ():
 		print "Closing...."
 		sys.exit(-1)
 
+	if args.noverify:
+		h = httplib2.Http(disable_ssl_certificate_validation=True)
+	else:
+		h = httplib2.Http()
+
 	# Hello world test
 	print "TEST " + colored(testcount, "blue") + ": "  + "Attempting 'Hello, world' test..."
 	try:
-		if args.noverify:
-			h = httplib2.Http(disable_ssl_certificate_validation=True)
-		else:
-			h = httplib2.Http()
-		(resp_headers, content) = h.request(args.server + args.testpath, "GET")
-		
+		(resp_headers, content) = h.request(args.server + args.testpath, "GET")	
 		if content.rstrip()  in args.test_json.rstrip():
 			print "TEST " + colored(testcount, "blue") + ": "  + colored("Successful", "green")
 			successful = successful + 1
@@ -77,7 +77,22 @@ def main ():
 		print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
 		print "\tREASON: " + colored(sys.exc_info()[:2], "red")
 		failed = failed + 1
-
+	
+	testcount = testcount +1
+	print "\nTEST " + colored(testcount, "blue") + ": " + "Attempting to get API version from server..."
+	try:
+		(resp_headers, content) = h.request(args.server + "api/version", "GET", '{ "os":"android", "version":"2.3.5","appversion":"0.1"}')
+		if resp_headers. status != 400:
+			# TO DO: How does server return API versions?
+			print "TODO"
+		else:
+			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+			print "\tREASON: " + colored("Server did not understand API version request", "red")
+			failed = failed + 1
+	except:
+		print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+		print "\tREASON: " + colored(sys.exc_info()[:2], "red")
+		failed = failed + 1
 
 	print "\n\n === TESTS COMPLETE ===\n"
 	print "Tests ran: " + colored(testcount, "blue")
