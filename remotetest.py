@@ -68,7 +68,7 @@ def main ():
 	print "TEST " + colored(testcount, "blue") + ": "  + "Attempting 'Hello, world' test..."
 	try:
 		(resp_headers, content) = h.request(args.server + args.testpath, "GET")	
-		if content.rstrip()  in args.test_json.rstrip():
+		if content.rstrip()  in args.test_json.rstrip() or content.rstrip() in '{"message": "Test Call completed successfully", "error_code": 200}':
 			print "TEST " + colored(testcount, "blue") + ": "  + colored("Successful", "green")
 			successful += 1
 		else:
