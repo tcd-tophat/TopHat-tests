@@ -36,7 +36,7 @@ args  = parser.parse_args()
 
 def main ():
 
-	testcount = 1
+	testcount = 0
 	successful = 0
 	failed = 0
 	
@@ -83,7 +83,11 @@ def main ():
 		failed = failed + 1
 	
 	testcount = testcount +1
+
+	############# TEST #############
+
 	print "\nTEST " + colored(testcount, "blue") + ": " + "Attempting to get API version from server..."
+
 	try:
 		(resp_headers, content) = h.request(args.server + "version" + "/", "GET", '{ "os":"android", "version":"2.3.5","appversion":"0.1"}')
 		
@@ -112,6 +116,76 @@ def main ():
 		print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
 		print "\tREASON: " + colored(sys.exc_info()[:2], "red")
 		failed = failed + 1
+
+	testcount = testcount +1
+	############# TEST ############
+
+	print "\nTEST " + colored(testcount, "blue") + ": " + "Attempting to get an anonymous API key from server..."
+
+	try:
+		(resp_headers, content) = h.request(args.server + "apitokens" + "/", "POST", 'data={}', headers={'content-type':'application/x-www-form-urlencoded'})
+		
+		if resp_headers.status == 201:
+			# TO DO: How does server return API versions?
+			mapped = load(StringIO(content))
+
+			print "TEST " + colored(testcount, "blue") + ": "  + colored("Successful", "green")
+
+			if 'apitoken' in mapped:
+				print "\tAPI Token: " + colored(mapped['apitoken'], "yellow")
+
+			successful += 1
+
+		elif resp_headers.status >= 400 and resp_headers.status < 500:
+			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+			print "\tREASON: " + colored("Server did not understand API version request", "red")
+			failed = failed + 1
+
+		elif resp_headers.status >= 500:
+			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+			print "\tREASON: " + colored("Server had encountered internal server", "red")
+			failed = failed + 1
+	except:
+		print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+		print "\tREASON: " + colored(sys.exc_info()[:2], "red")
+		failed = failed + 1
+
+	testcount = testcount +1
+
+	############# TEST ############
+
+	print "\nTEST " + colored(testcount, "blue") + ": " + "Attempting to get an anonymous API key from server..."
+
+	try:
+		(resp_headers, content) = h.request(args.server + "apitokens" + "/", "POST", 'data={"username":"'+args.user+'", "password":"'+args.password+'" }', headers={'content-type':'application/x-www-form-urlencoded'})
+		
+		if resp_headers.status == 201:
+			# TO DO: How does server return API versions?
+
+			mapped = load(StringIO(content))
+
+			print "TEST " + colored(testcount, "blue") + ": "  + colored("Successful", "green")
+
+			if 'apitoken' in mapped:
+				print "\tAPI Token: " + colored(mapped['apitoken'], "yellow")
+
+			successful += 1
+
+		elif resp_headers.status >= 400 and resp_headers.status < 500:
+			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+			print "\tREASON: " + colored("Server did not understand API version request", "red")
+			failed = failed + 1
+
+		elif resp_headers.status >= 500:
+			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+			print "\tREASON: " + colored("Server had encountered internal server", "red")
+			failed = failed + 1
+	except:
+		print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+		print "\tREASON: " + colored(sys.exc_info()[:2], "red")
+		failed = failed + 1
+
+	testcount = testcount +1
 
 	print "\n\n === TESTS COMPLETE ===\n"
 	print "Tests ran: " + colored(testcount, "blue")
