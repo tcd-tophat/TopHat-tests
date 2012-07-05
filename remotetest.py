@@ -154,7 +154,7 @@ def main ():
 
 	############# TEST ############
 
-	print "\nTEST " + colored(testcount, "blue") + ": " + "Attempting to get an anonymous API key from server..."
+	print "\nTEST " + colored(testcount, "blue") + ": " + "Attempting to get user API key from server..."
 
 	try:
 		(resp_headers, content) = h.request(args.server + "apitokens" + "/", "POST", 'data={"username":"'+args.user+'", "password":"'+args.password+'" }', headers={'content-type':'application/x-www-form-urlencoded'})
@@ -192,7 +192,7 @@ def main ():
 	print "\nTEST " + colored(testcount, "blue") + ": " + "Attempting to get a game from server..."
 
 	try:
-		(resp_headers, content) = h.request(args.server + "games" + "/" + "1", "GET", '')
+		(resp_headers, content) = h.request(args.server + "games" + "/1", "GET", '')
 		
 		if resp_headers.status == 200:
 			# TO DO: How does server return API versions?
