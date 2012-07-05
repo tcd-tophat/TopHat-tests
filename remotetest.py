@@ -14,9 +14,9 @@ remotetest
 	Script for remote testing for the TopHat server.
 
 """
-__author__ = "Ian Connolly (ian@tophat.ie, connolim@tcd.ie)"
+__author__ = "Ian Connolly (ian@tophat.ie, connolim@tcd.ie) and Kevin Bluett (kevin@tophat.ie, bluettk@tcd.ie)"
 __license__ = "MIT"
-__version__ = "0.0.6"
+__version__ = "0.0.1"
 
 # Login, API token, Create/Delete user, Create/Delete game, Time requests for user data, game data etc. 
 # Try to break server... Bad HTTP, bad JSON
@@ -170,6 +170,45 @@ def main ():
 				print "\tAPI Token: " + colored(mapped['apitoken'], "yellow")
 
 			successful += 1
+
+		elif resp_headers.status >= 400 and resp_headers.status < 500:
+			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+			print "\tREASON: " + colored("Server did not understand API version request", "red")
+			failed = failed + 1
+
+		elif resp_headers.status >= 500:
+			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+			print "\tREASON: " + colored("Server had encountered internal server", "red")
+			failed = failed + 1
+	except:
+		print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
+		print "\tREASON: " + colored(sys.exc_info()[:2], "red")
+		failed = failed + 1
+
+	testcount = testcount +1
+
+	############# TEST ############
+		
+	print "\nTEST " + colored(testcount, "blue") + ": " + "Attempting to get a game from server..."
+
+	try:
+		(resp_headers, content) = h.request(args.server + "games" + "/" + "1", "GET", '')
+		
+		if resp_headers.status == 200:
+			# TO DO: How does server return API versions?
+
+			if content == '{"game_type_id": 1, "name": "Testing Assasin", "creator": {"id": 1, "name": "Kevin Baker"}, "game_type": "Assassin", "time": "2012-06-05 13:12:30", "id": 1}':
+
+				mapped = load(StringIO(content))
+
+				print "TEST " + colored(testcount, "blue") + ": "  + colored("Successful", "green")
+
+				if 'name' in mapped:
+					print "\tGame Loaded: " + colored(mapped['name'], "yellow")
+
+				successful += 1
+			else:
+				pass
 
 		elif resp_headers.status >= 400 and resp_headers.status < 500:
 			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
