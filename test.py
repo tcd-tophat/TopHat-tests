@@ -9,6 +9,8 @@ class Test:
 	_reason = None
 	args = None
 	inform = None
+	headers = None
+	content = None
 
 	def __init__(self, args):
 		self.args = args

@@ -68,8 +68,10 @@ def main():
 		else:
 			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
 			print "\tREASON: " + colored(testclass.getReason(), "red")
-			print "\tStatus Code: " + colored(testclass.headers.status, "yellow")	
-			print "\tReturned JSON: " + colored(testclass.content, "yellow")			
+			if testclass.headers is not None:
+				print "\tStatus Code: " + colored(testclass.headers.status, "yellow")	
+			if testclass.content is not None:
+				print "\tReturned JSON: " + colored(testclass.content, "yellow")			
 			failed += 1
 
 	print "\n\n === TESTS COMPLETE ===\n"
