@@ -120,4 +120,6 @@ def import_item(name):
         return __import__(obj)
 
 if __name__ == '__main__':
-	main()
+	import timeit
+	t = timeit.Timer("main()","from __main__ import main")
+	print "Time for test:"  + str(t.timeit(1))
