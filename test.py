@@ -21,6 +21,8 @@ class Test:
 
 	def runTest(self):
 		try:
+			self._setup()
+
 			self._test()
 
 			self._status = self.headers.status
@@ -30,15 +32,23 @@ class Test:
 			if self.headers.status >= 500:
 				self._reason = "Error Code "+self.headers.status
 				self.error = "Internal Server Error"
+				self._tearUp()
 				return False
 
 			else:
+				self._tearUp()
 				return self._request_ok(load(StringIO(self.content)))
 		except:
 			self._error = "Except occurred in processing"
 			self._reason = sys.exc_info()[:2]
-
+			self._tearUp()
 			return False
+
+	def _setup(self):
+		pass
+
+	def _tearUp(self):
+		pass
 
 	def getError(self):
 		return self._error
