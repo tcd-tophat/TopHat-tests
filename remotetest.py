@@ -32,8 +32,6 @@ parser.add_argument("-t", "--testpath", help="Provide path from root of test req
 parser.add_argument("-j", "--json", help="Provide sample json data for Hello, World test. Defaults to platform default", default='\r{"glossary": {"title": "example glossary","GlossDiv": {"title": "S","GlossList": {"GlossEntry": {"ID": "SGML","SortAs": "SGML","GlossTerm": "Standard Generalized Markup Language","Acronym": "SGML","Abbrev": "ISO 8879:1986","GlossDef": {"para": "A meta-markup language, used to create markup languages such as DocBook.","GlossSeeAlso": ["GML", "XML"]},"GlossSee": "markup"}}}}}\n', dest="test_json")
 args  = parser.parse_args()
 
-
-
 def main ():
 
 	testcount = 0
@@ -173,12 +171,16 @@ def main ():
 
 		elif resp_headers.status >= 400 and resp_headers.status < 500:
 			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
-			print "\tREASON: " + colored("Server did not understand API version request", "red")
+			print "\tREASON: " + colored("Server did not understand API key request", "red")
+			mapped = load(StringIO(content))
+			print "\tError Message: " + colored(mapped['error_message'], "yellow")
 			failed = failed + 1
 
 		elif resp_headers.status >= 500:
 			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
 			print "\tREASON: " + colored("Server had encountered internal server", "red")
+			mapped = load(StringIO(content))
+			print "\tError Message: " + colored(mapped['error_message'], "yellow")
 			failed = failed + 1
 	except:
 		print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
@@ -197,7 +199,7 @@ def main ():
 		if resp_headers.status == 200:
 			# TO DO: How does server return API versions?
 
-			if content == '{"game_type_id": 1, "name": "Testing Assasin", "creator": {"id": 1, "name": "Kevin Baker"}, "game_type": "Assassin", "time": "2012-06-05 13:12:30", "id": 1}':
+			if content == '{"game_type_id": 1, "name": "Testing Assasin", "creator": {"id": 1, "name": "Kevin Baker"}, "game_type": "Assassin", "time": "2012-06-05 12:12:30", "id": 1}':
 
 				mapped = load(StringIO(content))
 
@@ -208,11 +210,14 @@ def main ():
 
 				successful += 1
 			else:
-				pass
+				print "TEST " + colored(testcount, "blue") + ": "  + colored("Successful", "red")
+				print "\tGame Error: " + colored(content, "yellow")
+				failed = failed + 1
 
 		elif resp_headers.status >= 400 and resp_headers.status < 500:
 			print"TEST " + colored(testcount, "blue") + ": " + colored("Failed", "red")
-			print "\tREASON: " + colored("Server did not understand API version request", "red")
+			print "\tREASON: " + colored("Server did not understand API game versions request", "red")
+			print "\tERROR: " + colored(content, "yellow")
 			failed = failed + 1
 
 		elif resp_headers.status >= 500:
