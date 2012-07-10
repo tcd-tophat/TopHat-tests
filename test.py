@@ -11,6 +11,8 @@ class Test:
 	inform = None
 	headers = None
 	content = None
+	_requests = []
+	_errors = []
 
 	def __init__(self, args):
 		self.args = args
@@ -21,23 +23,35 @@ class Test:
 
 	def runTest(self):
 		try:
+			self._requests = []
+			self._errors = []
+
 			self._setup()
 
 			self._test()
 
-			self._status = self.headers.status
+			if len(self._requests) == 0:
+				self._requests.append({"headers": self.headers, "content": self.content, "func": "_request_ok"})
 
-			self.content = self.content.rstrip() 
+			for request in self._requests:
 
-			if self.headers.status >= 500:
-				self._reason = "Error Code "+self.headers.status
-				self.error = "Internal Server Error"
-				self._tearUp()
-				return False
+				request["content"] = request["content"].rstrip() 
 
-			else:
-				self._tearUp()
-				return self._request_ok(load(StringIO(self.content)))
+				# Legacy tests
+				self._status = request["headers"].status
+
+				if request["headers"].status >= 500:
+					self._reason = "Error Code "+request["headers"].status
+					self.error = "Internal Server Error"
+					self._tearUp()
+					return False
+				else:
+
+					ret = getattr(self, request["func"])(load(StringIO(request["content"])))
+					self._tearUp()
+					print request["content"]
+					print ret
+					return ret
 		except:
 			self._error = "Except occurred in processing"
 			self._reason = sys.exc_info()[:2]
