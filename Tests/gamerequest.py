@@ -8,7 +8,7 @@ class Gamerequest(Test):
 	GAME_ID = 1
 
 	def _test(self):
-		(self.headers, self.content) = self.h.request(self.args.server + "games" + "/" + str(self.GAME_ID), "GET", '')
+		(self.headers, self.content) = self.h.request(self.args.server + "games" + "/" + str(self.GAME_ID) +"?apikey="+ self._getApiToken(), "GET", '')
 
 	def _request_ok(self, content):
 		if self._status == 200 and "name" in content and "id" in content:

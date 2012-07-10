@@ -4,6 +4,7 @@ class Anonapi(Test):
 
 	short_title = "Anonymous API Token Request"
 	title = "Attempts to get an anonymous API token from the server."
+	apitoken = None
 
 	def _test(self):
 		(self.headers, self.content) = self.h.request(self.args.server + "apitokens" + "/", "POST", 'data={}', headers={'content-type':'application/x-www-form-urlencoded'})

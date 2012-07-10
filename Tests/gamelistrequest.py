@@ -1,4 +1,6 @@
 from test import Test
+from json import load
+from StringIO import StringIO
 
 class Gamelistrequest(Test):
 
@@ -6,7 +8,7 @@ class Gamelistrequest(Test):
 	title = "Attempts to get a list of games from the server."
 
 	def _test(self):
-		(self.headers, self.content) = self.h.request(self.args.server + "games" + "/", "GET", '')
+		(self.headers, self.content) = self.h.request(self.args.server + "games" + "/?apikey=" + self._getApiToken(), "GET", '')
 
 	def _request_ok(self, content):
 		if self._status == 200 and "games" in content:

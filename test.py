@@ -49,14 +49,18 @@ class Test:
 
 					ret = getattr(self, request["func"])(load(StringIO(request["content"])))
 					self._tearUp()
-					print request["content"]
-					print ret
 					return ret
 		except:
 			self._error = "Except occurred in processing"
 			self._reason = sys.exc_info()[:2]
 			self._tearUp()
 			return False
+
+	def _getApiToken(self):
+		(self.headers, self.content) = self.h.request(self.args.server + "apitokens" + "/", "POST", 'data={"username":"'+self.args.user+'", "password":"'+self.args.password+'" }', headers={'content-type':'application/x-www-form-urlencoded'})
+		content = load(StringIO(self.content))
+		self.apitoken = content["apitoken"]
+		return self.apitoken
 
 	def _setup(self):
 		pass

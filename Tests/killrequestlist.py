@@ -6,7 +6,7 @@ class Killrequestlist(Test):
 	title = "Attempts to get a list of kills from the server."
 
 	def _test(self):
-		(self.headers, self.content) = self.h.request(self.args.server + "kills" + "/", "GET", '')
+		(self.headers, self.content) = self.h.request(self.args.server + "kills" + "/"+"?apikey=" + self._getApiToken(), "GET", '')
 
 	def _request_ok(self, content):
 		if self._status == 200 and "kills" in content:
