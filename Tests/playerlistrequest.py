@@ -6,7 +6,7 @@ class Playerlistrequest(Test):
 	title = "Attempts to get a list of games from the server."
 
 	def _test(self):
-		(self.headers, self.content) = self.h.request(self.args.server + "players" + "/"+"?apikey=" + self._getApiToken(), "GET", '')
+		(self.headers, self.content) = self.h.request(self.args.server + "players" + "/"+"?apitoken=" + self._getApiToken(), "GET", '')
 
 	def _request_ok(self, content):
 		if self._status == 200 and "players" in content:

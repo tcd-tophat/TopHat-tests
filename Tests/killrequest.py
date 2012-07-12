@@ -8,7 +8,7 @@ class Killrequest(Test):
 	KILL_ID = 1
 
 	def _test(self):
-		(self.headers, self.content) = self.h.request(self.args.server + "kills" + "/" + str(self.KILL_ID) +"?apikey=" + self._getApiToken(), "GET", '')
+		(self.headers, self.content) = self.h.request(self.args.server + "kills" + "/" + str(self.KILL_ID) +"?apitoken=" + self._getApiToken(), "GET", '')
 
 	def _request_ok(self, content):
 		if self._status == 200 and "killer" in content:

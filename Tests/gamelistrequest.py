@@ -8,7 +8,7 @@ class Gamelistrequest(Test):
 	title = "Attempts to get a list of games from the server."
 
 	def _test(self):
-		(self.headers, self.content) = self.h.request(self.args.server + "games" + "/?apikey=" + self._getApiToken(), "GET", '')
+		(self.headers, self.content) = self.h.request(self.args.server + "games" + "/?apitoken=" + self._getApiToken(), "GET", '')
 
 	def _request_ok(self, content):
 		if self._status == 200 and "games" in content:
