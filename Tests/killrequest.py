@@ -13,7 +13,7 @@ class Killrequest(Test):
 	def _request_ok(self, content):
 		if self._status == 200 and "killer" in content:
 			if content['id'] == self.KILL_ID:
-				self.inform = "Kill Info Received - id: "+str(content['id'])+" - victim:  "+str(content['victim']['name'])
+				self.inform = "Kill Info Received - id: "+str(int(content['id']))+" - victim:  "+str(content['victim'])
 				return True
 			else:
 				self._reason = "The server did not return the same kill as request "+str(self.KILL_ID)+" != "+str(content['id'])

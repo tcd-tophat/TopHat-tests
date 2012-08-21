@@ -41,7 +41,7 @@ class Test:
 				self._status = request["headers"].status
 
 				if request["headers"].status >= 500:
-					self._reason = "Error Code "+request["headers"].status
+					self._reason = "Error Code "+str(request["headers"].status)
 					self.error = "Internal Server Error"
 					self._tearUp()
 					return False
@@ -52,12 +52,15 @@ class Test:
 					return ret
 		except:
 			self._error = "Except occurred in processing"
+			
+			import traceback
+			traceback.print_exc(file=sys.stdout)
 			self._reason = sys.exc_info()[:2]
 			self._tearUp()
 			return False
 
 	def _getApiToken(self):
-		(self.headers, self.content) = self.h.request(self.args.server + "apitokens" + "/", "POST", 'data={"username":"'+self.args.user+'", "password":"'+self.args.password+'" }', headers={'content-type':'application/x-www-form-urlencoded'})
+		(self.headers, self.content) = self.h.request(self.args.server + "apitokens" + "/", "POST", 'data={"email":"'+self.args.user+'", "password":"'+self.args.password+'" }', headers={'content-type':'application/x-www-form-urlencoded'})
 		content = load(StringIO(self.content))
 		self.apitoken = content["apitoken"]
 		return self.apitoken
