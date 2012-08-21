@@ -94,12 +94,12 @@ def get_tests():
 
 	mods = list()
 
-	for root, dirs, files in os.walk('./tests/'):
+	for root, dirs, files in os.walk('./Tests/'):
 		for name in files:       
 			filename = os.path.join(root, name)
 
 			if not ".pyc" in filename:
-				filename = filename.replace("./tests/", "")
+				filename = filename.replace("./Tests/", "")
 				filename = filename.replace(".py", "")
 
 				if filename != "__init__" and filename != ".DS_Store":
