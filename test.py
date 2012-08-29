@@ -18,6 +18,9 @@ class Test:
 		self.args = args
 		self.h = httplib2.Http()
 
+		self.headers = None
+		self.content = None
+
 	def _test(self):
 		pass
 

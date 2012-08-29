@@ -12,6 +12,7 @@ import timeit
 import thread
 from threading import Thread
 import time
+import pprint
 
 """
 remotetest
@@ -61,6 +62,8 @@ def main():
 		testcount += 1
 		testclass = import_run_test(test)
 
+		print "----------"
+
 		if not args.quiet:
 			print "TEST " + colored(testcount, "blue") + ": "  + "Attempting '"+testclass.short_title+"' test..."
 
@@ -81,7 +84,7 @@ def main():
 					print "\tStatus Code: " + colored(testclass.headers.status, "yellow")	
 			if testclass.content is not None:
 				if not args.quiet:
-					print "\tReturned JSON: " + colored(testclass.content, "yellow")			
+					print "\tReturned JSON: " + colored(testclass.content, "yellow")
 			failed += 1
 
 	if not args.quiet:
