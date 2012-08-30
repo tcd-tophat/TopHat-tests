@@ -8,15 +8,15 @@ class Gamecreate(Test):
 
 	def _test(self):
 		url = self.args.server + "games/?apitoken=" + self._getApiToken()
-		data = dict(name="Joe Bush League Tournament #2")
-		(headers, content) = self.h.request(url, method="POST", body=urlencode(data), headers={'Content-type': 'application/x-www-form-urlencoded'})
-		print headers
-		print content
+		dict_ = {}
+		dict_["data"] = "{\"name\":\"Joe Bush League Tournament\"}"
+		data = urlencode(dict_)
+		(headers, content) = self.h.request(url, method="POST", body=data, headers={'Content-type': 'application/x-www-form-urlencoded'})
 		self.headers = headers
 		self.content = content	
 
 	def _request_ok(self, content):
-		if self._status == 201 and "alive" in content:
+		if self._status == 201 and "name" in content and "id" in content:
 			self.inform = "The game was created successfully"
 			return True
 		else:
