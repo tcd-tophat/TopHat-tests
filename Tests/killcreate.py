@@ -16,7 +16,7 @@ class Killcreate(Test):
 		self.content = content	
 
 	def _request_ok(self, content):
-		if self._status == 201 and "name" in content and "id" in content:
+		if self._status == 201 and "killer" in content and "id" in content:
 			self.inform = "The game was created successfully"
 			return True
 		else:
